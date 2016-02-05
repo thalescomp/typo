@@ -607,6 +607,27 @@ describe Admin::ContentController do
       end
     end
 
+    describe 'merge action' do
+
+      before do
+        @second_article = Factory(:second_article)
+      end
+      
+      it 'should merge article with different ID' do
+        Article.any_instance.should_receive(:merge_with).with(@second_article.id)
+        post :merge, { :id => @article.id, :merge_with => @second_article.id }
+        assigns(:article).should_not be_nil
+        assigns(:article).should be_valid
+      end
+      
+      it 'should redirect to edit path' do
+        Article.any_instance.stub(:merge_with).with(@second_article.id)
+        post :merge, { :id => @article.id, :merge_with => @second_article.id }
+        response.should redirect_to(:action => "edit", :id => @article.id)
+      end
+      
+    end
+
   end
 
   describe 'with publisher connection' do

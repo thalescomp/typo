@@ -1,6 +1,7 @@
 # coding: utf-8
 require 'uri'
 require 'net/http'
+require 'debugger'
 
 class Article < Content
   include TypoGuid
@@ -414,6 +415,18 @@ class Article < Content
 
   def access_by?(user)
     user.admin? || user_id == user.id
+  end
+
+  def merge_with(id)
+    if self.id != id
+      second_article = Article.find(id)
+      self.body = self.body+second_article.body
+      second_article.comments.each do |comment|
+        self.add_comment(comment.attributes).save
+      end
+      self.save
+      second_article.destroy
+    end
   end
 
   protected

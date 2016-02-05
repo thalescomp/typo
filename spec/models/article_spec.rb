@@ -1,6 +1,6 @@
 # coding: utf-8
 require 'spec_helper'
-
+require 'debugger'
 describe Article do
 
   before do
@@ -629,6 +629,21 @@ describe Article do
       end
     end
 
+  end
+  
+  describe '[instance].merge_with' do
+    before :each do
+      @article = Factory.create(:article)
+      @second_article = Factory.create(:second_article)
+    end
+    
+    describe 'for different articles' do
+      it 'should concatenate body articles in merged article' do
+        body = @article.body
+        @article.merge_with(@second_article.id)
+        @article.body.should eq(body+@second_article.body)
+      end
+    end
   end
 end
 

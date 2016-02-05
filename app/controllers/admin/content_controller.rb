@@ -1,4 +1,5 @@
 require 'base64'
+require 'debugger'
 
 module Admin; end
 class Admin::ContentController < Admin::BaseController
@@ -111,6 +112,16 @@ class Admin::ContentController < Admin::BaseController
       return true
     end
     render :text => nil
+  end
+
+  def merge
+    if current_user.admin?
+      @article = Article.find(params[:id])
+      if @article.access_by? current_user
+        @article.merge_with(params[:merge_with])
+        redirect_to :action => "edit", :id => @article.id
+      end
+    end
   end
 
   protected
